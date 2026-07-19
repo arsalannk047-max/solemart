@@ -11,10 +11,6 @@ export default async function HomePage() {
     db.from('products').select('*, product_variants(*)').eq('is_active', true).order('created_at', { ascending: false }).limit(8)
   ]);
 
-  const heroImage =
-    (products && products[0] && products[0].images && products[0].images[0]) ||
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&q=70';
-
   return (
     <>
       <section className="relative bg-ink text-white px-6 pt-16 pb-24 overflow-hidden">
@@ -40,7 +36,16 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="relative">
-            <img src={heroImage} alt="Featured shoe" className="w-full aspect-square object-cover rounded-2xl" />
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/hero-poster.jpg"
+              className="w-full aspect-square object-cover rounded-2xl"
+            >
+              <source src="/hero-video.mp4" type="video/mp4" />
+            </video>
             <div className="absolute -bottom-5 -left-5 bg-volt text-voltink font-mono font-bold text-sm px-5 py-3.5 rounded-xl shadow-2xl -rotate-3">
               SIZE RUN: UK 6 — UK 12
             </div>
