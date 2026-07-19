@@ -6,7 +6,6 @@ const SOLE_LEN = 4; // "SOLE" is white, "MART" is volt — matches the site word
 
 export default function IntroSplash() {
   const [visible, setVisible] = useState(true);
-  const [fading, setFading] = useState(false);
   const [phase, setPhase] = useState('mark'); // 'mark' -> 'letters'
   const [skip, setSkip] = useState(false);
   const started = useRef(false);
@@ -22,25 +21,27 @@ export default function IntroSplash() {
     }
     sessionStorage.setItem('solemart_intro_seen', '1');
     setTimeout(() => setPhase('letters'), 950);
-    setTimeout(() => setFading(true), 2500);
-    setTimeout(() => setVisible(false), 3000);
+    // No crossfade — the splash stays fully solid and disappears in one clean cut,
+    // so the site is never visible underneath while it's still showing.
+    setTimeout(() => setVisible(false), 2700);
   }, []);
 
   if (skip || !visible) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-[999] flex items-center justify-center transition-opacity duration-500 ${fading ? 'opacity-0' : 'opacity-100'}`}
+      className="fixed inset-0 z-[999] flex items-center justify-center"
       style={{
-        background:
-          'radial-gradient(circle at 50% 40%, rgba(198,255,77,0.10) 0%, rgba(15,17,20,1) 55%, #0a0b0d 100%)'
+        background: '#0a0b0d',
+        backgroundImage:
+          'radial-gradient(circle at 50% 40%, rgba(198,255,77,0.12) 0%, rgba(10,11,13,1) 60%)'
       }}
       aria-hidden="true"
     >
       <div className="flex flex-col items-center">
         <div className="relative w-20 h-20 mb-6">
           <div
-            className={`absolute inset-0 rounded-full border-[3px] border-volt/20 border-t-volt transition-opacity duration-500 ${
+            className={`absolute inset-0 rounded-full border-[3px] border-volt/20 border-t-volt transition-opacity duration-300 ${
               phase === 'mark' ? 'opacity-100 animate-spin intro-ring-glow' : 'opacity-0'
             }`}
             style={{ animationDuration: '1000ms' }}
