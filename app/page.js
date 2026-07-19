@@ -13,42 +13,35 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative bg-ink text-white px-6 pt-16 pb-24 overflow-hidden">
-        <div className="hero-bg">
-          <div className="glow-orb volt"></div>
-          <div className="glow-orb crimson"></div>
-          <div className="glow-orb azure"></div>
-        </div>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-          <div>
-            <div className="font-mono text-volt text-xs tracking-widest uppercase mb-4">— Est. Karachi · Real Stock, Real Sizes —</div>
-            <h1 className="font-display text-6xl leading-none uppercase mb-6">Step into<br />the new drop.</h1>
-            <p className="text-white/60 max-w-md mb-8">
-              Sneakers, sandals and street styles — catalogued properly, counted honestly. Add to cart, pay on delivery.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/shop" className="bg-volt text-voltink font-bold uppercase text-sm tracking-wide px-7 py-3.5 rounded-full shadow-volt hover:-translate-y-0.5 transition-transform">
-                Shop the rack →
-              </Link>
-              <Link href="/shop" className="border-2 border-white text-white font-bold uppercase text-sm tracking-wide px-7 py-3.5 rounded-full hover:-translate-y-0.5 transition-transform">
-                New arrivals
-              </Link>
-            </div>
+      <section className="relative bg-ink text-white overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/hero-poster-neon.jpg"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source src="/hero-video-neon.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/65"></div>
+
+        <div className="relative z-10 max-w-3xl mx-auto px-6 pt-28 pb-32 text-center">
+          <div className="font-mono text-volt text-xs tracking-widest uppercase mb-4">— Est. Karachi · Real Stock, Real Sizes —</div>
+          <h1 className="font-display text-6xl leading-none uppercase mb-6">Step into<br />the new drop.</h1>
+          <p className="text-white/70 max-w-xl mx-auto mb-8">
+            Sneakers, sandals and street styles — catalogued properly, counted honestly. Add to cart, pay on delivery.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <Link href="/shop" className="bg-volt text-voltink font-bold uppercase text-sm tracking-wide px-7 py-3.5 rounded-full shadow-volt hover:-translate-y-0.5 transition-transform">
+              Shop the rack →
+            </Link>
+            <Link href="/shop" className="border-2 border-white text-white font-bold uppercase text-sm tracking-wide px-7 py-3.5 rounded-full hover:-translate-y-0.5 transition-transform">
+              New arrivals
+            </Link>
           </div>
-          <div className="relative">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              poster="/hero-poster.jpg"
-              className="w-full aspect-square object-cover rounded-2xl"
-            >
-              <source src="/hero-video.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute -bottom-5 -left-5 bg-volt text-voltink font-mono font-bold text-sm px-5 py-3.5 rounded-xl shadow-2xl -rotate-3">
-              SIZE RUN: UK 6 — UK 12
-            </div>
+          <div className="inline-block bg-volt text-voltink font-mono font-bold text-sm px-5 py-3 rounded-xl shadow-2xl">
+            SIZE RUN: UK 6 — UK 12
           </div>
         </div>
       </section>
