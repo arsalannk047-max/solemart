@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Anton', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #F5F5F7;
+  color: #0B0B0D;
+}
+
+::selection {
+  background: #C6FF4D;
+  color: #17210A;
+}
+
+/* ---- signature element: diagonal-cut "label" card ---- */
+.cut-card {
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+  position: relative;
+}
+.cut-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: #0B0B0D;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  pointer-events: none;
+}
+
+/* ---- animated hero background: drifting glow orbs + moving grid ---- */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  animation: gridDrift 26s linear infinite;
+}
+@keyframes gridDrift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(42px, 42px); }
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.glow-orb.volt {
+  width: 420px;
+  height: 420px;
+  background: #C6FF4D;
+  top: -120px;
+  left: -100px;
+  animation: floatA 16s ease-in-out infinite;
+}
+.glow-orb.crimson {
+  width: 360px;
+  height: 360px;
+  background: #E63950;
+  bottom: -140px;
+  right: -80px;
+  animation: floatB 19s ease-in-out infinite;
+}
+.glow-orb.azure {
+  width: 260px;
+  height: 260px;
+  background: #3D7CFF;
+  top: 30%;
+  right: 18%;
+  opacity: 0.35;
+  animation: floatC 22s ease-in-out infinite;
+}
+@keyframes floatA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, 40px) scale(1.12); }
+}
+@keyframes floatB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, -30px) scale(1.08); }
+}
+@keyframes floatC {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-40px, 50px); }
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #C6FF4D;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
