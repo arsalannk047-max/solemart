@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useRef, useState } from 'react';
 
 const WORD = 'SOLEMART';
@@ -14,18 +13,14 @@ export default function IntroSplash() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // Guard against React StrictMode's dev-only double effect run, which would
-    // otherwise re-check sessionStorage a second time and cancel the animation early.
     if (started.current) return;
     started.current = true;
-
     if (sessionStorage.getItem('solemart_intro_seen')) {
       setSkip(true);
       setVisible(false);
       return;
     }
     sessionStorage.setItem('solemart_intro_seen', '1');
-
     setTimeout(() => setPhase('letters'), 950);
     setTimeout(() => setFading(true), 2500);
     setTimeout(() => setVisible(false), 3000);
@@ -35,15 +30,18 @@ export default function IntroSplash() {
 
   return (
     <div
-      className={`fixed inset-0 z-[999] bg-ink flex items-center justify-center transition-opacity duration-500 ${fading ? 'opacity-0' : 'opacity-100'}`}
+      className={`fixed inset-0 z-[999] flex items-center justify-center transition-opacity duration-500 ${fading ? 'opacity-0' : 'opacity-100'}`}
+      style={{
+        background:
+          'radial-gradient(circle at 50% 40%, rgba(198,255,77,0.10) 0%, rgba(15,17,20,1) 55%, #0a0b0d 100%)'
+      }}
       aria-hidden="true"
     >
       <div className="flex flex-col items-center">
-        {/* the favicon mark: rounded square, "S", with an orbiting ring around it */}
         <div className="relative w-20 h-20 mb-6">
           <div
             className={`absolute inset-0 rounded-full border-[3px] border-volt/20 border-t-volt transition-opacity duration-500 ${
-              phase === 'mark' ? 'opacity-100 animate-spin' : 'opacity-0'
+              phase === 'mark' ? 'opacity-100 animate-spin intro-ring-glow' : 'opacity-0'
             }`}
             style={{ animationDuration: '1000ms' }}
           />
@@ -52,17 +50,16 @@ export default function IntroSplash() {
               phase === 'mark' ? 'scale-100 intro-pulse' : 'scale-90'
             }`}
           >
-            <span className="font-display text-3xl text-volt">S</span>
+            <span className="font-display text-3xl text-volt intro-mark-glow">S</span>
           </div>
         </div>
 
-        {/* wordmark letters, staggered in once the mark phase is done */}
         <div className="font-display text-3xl md:text-4xl tracking-wide flex h-10">
           {phase === 'letters' &&
             WORD.split('').map((ch, i) => (
               <span
                 key={i}
-                className="intro-letter"
+                className={`intro-letter ${i >= SOLE_LEN ? 'intro-letter-volt' : ''}`}
                 style={{
                   color: i < SOLE_LEN ? '#fff' : '#C6FF4D',
                   animationDelay: `${i * 65}ms`
@@ -80,13 +77,22 @@ export default function IntroSplash() {
         }
         @keyframes introPulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(198, 255, 77, 0.25); }
-          50% { box-shadow: 0 0 0 10px rgba(198, 255, 77, 0); }
+          50% { box-shadow: 0 0 0 12px rgba(198, 255, 77, 0); }
+        }
+        .intro-ring-glow {
+          filter: drop-shadow(0 0 8px rgba(198, 255, 77, 0.55));
+        }
+        .intro-mark-glow {
+          text-shadow: 0 0 12px rgba(198, 255, 77, 0.65), 0 0 24px rgba(198, 255, 77, 0.3);
         }
         .intro-letter {
           display: inline-block;
           opacity: 0;
           transform: translateY(14px);
           animation: introLetterIn 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .intro-letter-volt {
+          text-shadow: 0 0 10px rgba(198, 255, 77, 0.7), 0 0 22px rgba(198, 255, 77, 0.35);
         }
         @keyframes introLetterIn {
           to {
