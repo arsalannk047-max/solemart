@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { adminClient } from '@/lib/supabase/adminClient';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
@@ -15,9 +15,9 @@ export default async function Footer() {
             SOLE<span className="text-volt">MART</span>
           </div>
           <p className="text-sm leading-relaxed mb-4">
-            Sneakers, sandals and street styles — catalogued properly, counted honestly.
+            Sneakers, sandals and street styles - catalogued properly, counted honestly.
           </p>
-          
+          <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -63,7 +63,7 @@ export default async function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-white/40">
-          <span>© {year} SoleMart Co. All rights reserved.</span>
+          <span>&copy; {year} SoleMart Co. All rights reserved.</span>
           <span>Built for shoe lovers in Pakistan.</span>
         </div>
       </div>
