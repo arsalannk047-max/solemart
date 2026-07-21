@@ -1,13 +1,13 @@
 'use client';
-
 import Link from 'next/link';
-import { User, ShoppingBag, LogOut } from 'lucide-react';
+import { User, ShoppingBag, LogOut, Heart } from 'lucide-react';
 import { useCart } from './CartProvider';
+import { useWishlist } from './WishlistProvider';
 import { signOutAction } from '@/actions/auth';
 
 export default function Header({ user }) {
   const { count } = useCart();
-
+  const { count: wishlistCount } = useWishlist();
   return (
     <header className="sticky top-0 z-50 bg-ink">
       <div className="bg-volt text-voltink text-center text-[11px] font-mono font-bold tracking-wide py-1.5 px-4">
@@ -17,13 +17,13 @@ export default function Header({ user }) {
         <Link href="/" className="font-display text-2xl text-white tracking-wide">
           SOLE<span className="text-volt">MART</span>
         </Link>
-
         <nav className="hidden md:flex gap-8 text-sm font-semibold uppercase tracking-wide text-white">
           <Link href="/" className="hover:text-volt transition-colors">Home</Link>
           <Link href="/shop" className="hover:text-volt transition-colors">Shop</Link>
+          <Link href="/about" className="hover:text-volt transition-colors">About</Link>
+          <Link href="/contact" className="hover:text-volt transition-colors">Contact</Link>
           {user && <Link href="/orders" className="hover:text-volt transition-colors">Orders</Link>}
         </nav>
-
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
@@ -37,6 +37,14 @@ export default function Header({ user }) {
           ) : (
             <Link href="/login" className="text-white/80 hover:text-volt transition-colors" title="Log in"><User size={19} /></Link>
           )}
+          <Link href="/wishlist" className="relative text-white/80 hover:text-volt transition-colors" title="Wishlist">
+            <Heart size={19} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1.5 -right-2.5 bg-crimson text-white text-[10px] font-mono font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
           <Link href="/cart" className="relative text-white/80 hover:text-volt transition-colors" title="Cart">
             <ShoppingBag size={19} />
             {count > 0 && (

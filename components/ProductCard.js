@@ -1,9 +1,14 @@
+'use client';
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
 import { money, priceFrom, totalStock } from '@/lib/format';
+import { useWishlist } from './WishlistProvider';
 
 const FALLBACK = 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=60';
 
 export default function ProductCard({ product }) {
+  const { isSaved, toggle } = useWishlist();
+  const saved = isSaved(product.id);
   const price = priceFrom(product);
   const stock = totalStock(product);
   const isNew = Date.now() - new Date(product.created_at).getTime() < 1000 * 60 * 60 * 24 * 21;
@@ -33,6 +38,19 @@ export default function ProductCard({ product }) {
             New
           </span>
         ) : null}
+
+        <button
+          type="button"
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle(product.id);
+          }}
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform"
+          aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
+        >
+          <Heart size={16} className={saved ? 'fill-crimson text-crimson' : 'text-ink'} />
+        </button>
 
         <img
           src={(product.images && product.images[0]) || FALLBACK}

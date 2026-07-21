@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { CartProvider } from '@/components/CartProvider';
+import { WishlistProvider } from '@/components/WishlistProvider';
 import IntroSplash from '@/components/IntroSplash';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { getCurrentProfile } from '@/lib/auth';
@@ -18,16 +19,17 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const profile = await getCurrentProfile();
-
   return (
     <html lang="en" className={`${anton.variable} ${inter.variable} ${mono.variable}`}>
       <body className="font-body">
         <IntroSplash />
-        <CartProvider>
-          <Header user={profile} />
-          {children}
-          <Footer />
-        </CartProvider>
+        <WishlistProvider>
+          <CartProvider>
+            <Header user={profile} />
+            {children}
+            <Footer />
+          </CartProvider>
+        </WishlistProvider>
         <WhatsAppButton />
       </body>
     </html>
