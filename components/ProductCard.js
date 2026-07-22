@@ -7,17 +7,11 @@ import { useCart } from './CartProvider';
 
 const FALLBACK = 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=60';
 
-// Rotates through a few on-brand tinted backgrounds so the grid doesn't look flat/repetitive.
-const TINTS = [
-  { bg: 'bg-volt/10', bar: 'bg-volt text-voltink' },
-  { bg: 'bg-crimson/10', bar: 'bg-crimson text-white' },
-  { bg: 'bg-surfacealt', bar: 'bg-ink text-volt' },
-];
-
-function tintFor(id) {
+const ACCENTS = ['bg-volt text-voltink', 'bg-crimson text-white', 'bg-ink text-volt'];
+function accentFor(id) {
   let hash = 0;
   for (let i = 0; i < String(id).length; i++) hash = (hash + String(id).charCodeAt(i)) % 997;
-  return TINTS[hash % TINTS.length];
+  return ACCENTS[hash % ACCENTS.length];
 }
 
 export default function ProductCard({ product }) {
@@ -31,7 +25,7 @@ export default function ProductCard({ product }) {
   const soldOut = stock === 0;
   const lowStock = !soldOut && stock <= 5;
   const discountPct = onSale ? Math.round(((product.compare_at_price - price) / product.compare_at_price) * 100) : 0;
-  const tint = tintFor(product.id);
+  const accent = accentFor(product.id);
 
   function handleQuickAdd(e) {
     e.preventDefault();
@@ -53,18 +47,13 @@ export default function ProductCard({ product }) {
   return (
     <Link
       href={`/product/${product.slug}`}
-      className={`group relative block rounded-2xl border border-line overflow-hidden transition-all duration-300 hover:shadow-[0_16px_36px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-1 ${tint.bg} ${
+      className={`group relative block bg-surface rounded-2xl border border-line overflow-hidden transition-all duration-300 hover:shadow-[0_16px_36px_-10px_rgba(0,0,0,0.35)] hover:-translate-y-1 ${
         soldOut ? 'opacity-70' : ''
       }`}
     >
-      {/* vertical brand tag, top-left */}
-      <div className={`absolute top-0 left-0 z-10 h-24 w-7 flex items-center justify-center rounded-br-lg ${tint.bar}`}>
-        <span
-          className="text-[10px] font-bold uppercase tracking-widest"
-          style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-        >
-          {product.brand || 'SoleMart'}
-        </span>
+      {/* small brand ribbon, top-left */}
+      <div className={`absolute top-0 left-0 z-10 px-2.5 py-1 rounded-br-lg text-[10px] font-bold uppercase tracking-widest ${accent}`}>
+        {product.brand || 'SoleMart'}
       </div>
 
       {/* status badge, top-right */}
@@ -82,19 +71,19 @@ export default function ProductCard({ product }) {
         </span>
       ) : null}
 
-      {/* floating product image */}
-      <div className="relative aspect-square flex items-center justify-center p-8 pt-10">
+      {/* full-bleed product photo, no mismatched background box */}
+      <div className="relative aspect-square overflow-hidden bg-surfacealt">
         <img
           src={(product.images && product.images[0]) || FALLBACK}
           alt={product.name}
-          className={`max-h-full max-w-full object-contain drop-shadow-xl transition-transform duration-500 ease-out ${
-            soldOut ? '' : 'group-hover:scale-110 group-hover:-rotate-2'
+          className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
+            soldOut ? '' : 'group-hover:scale-[1.06]'
           }`}
         />
       </div>
 
       {/* bottom row: wishlist · name+price · quick add */}
-      <div className="flex items-center justify-between gap-2 px-4 pb-4">
+      <div className="flex items-center justify-between gap-2 px-4 py-3.5">
         <button
           type="button"
           onClick={e => {
@@ -102,7 +91,7 @@ export default function ProductCard({ product }) {
             e.stopPropagation();
             toggle(product.id);
           }}
-          className="w-8 h-8 shrink-0 rounded-full bg-white/85 flex items-center justify-center hover:scale-110 transition-transform"
+          className="w-8 h-8 shrink-0 rounded-full border border-line flex items-center justify-center hover:bg-surfacealt transition-colors"
           aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
         >
           <Heart size={15} className={saved ? 'fill-crimson text-crimson' : 'text-ink'} />
