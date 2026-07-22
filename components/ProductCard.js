@@ -1,13 +1,28 @@
 'use client';
 import Link from 'next/link';
-import { Heart } from 'lucide-react';
+import { Heart, ShoppingBag } from 'lucide-react';
 import { money, priceFrom, totalStock } from '@/lib/format';
 import { useWishlist } from './WishlistProvider';
+import { useCart } from './CartProvider';
 
 const FALLBACK = 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=60';
 
+// Rotates through a few on-brand tinted backgrounds so the grid doesn't look flat/repetitive.
+const TINTS = [
+  { bg: 'bg-volt/10', bar: 'bg-volt text-voltink' },
+  { bg: 'bg-crimson/10', bar: 'bg-crimson text-white' },
+  { bg: 'bg-surfacealt', bar: 'bg-ink text-volt' },
+];
+
+function tintFor(id) {
+  let hash = 0;
+  for (let i = 0; i < String(id).length; i++) hash = (hash + String(id).charCodeAt(i)) % 997;
+  return TINTS[hash % TINTS.length];
+}
+
 export default function ProductCard({ product }) {
   const { isSaved, toggle } = useWishlist();
+  const { addItem } = useCart();
   const saved = isSaved(product.id);
   const price = priceFrom(product);
   const stock = totalStock(product);
@@ -16,29 +31,70 @@ export default function ProductCard({ product }) {
   const soldOut = stock === 0;
   const lowStock = !soldOut && stock <= 5;
   const discountPct = onSale ? Math.round(((product.compare_at_price - price) / product.compare_at_price) * 100) : 0;
+  const tint = tintFor(product.id);
+
+  function handleQuickAdd(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const variant = (product.product_variants || []).find(v => v.stock > 0);
+    if (!variant) return;
+    addItem({
+      product_id: product.id,
+      variant_id: variant.id,
+      name: product.name,
+      size: variant.size,
+      color: variant.color,
+      price,
+      qty: 1,
+      stock: variant.stock
+    });
+  }
 
   return (
     <Link
       href={`/product/${product.slug}`}
-      className={`group block bg-surface border border-line rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.35)] hover:border-line/60 hover:-translate-y-1 ${
+      className={`group relative block rounded-2xl border border-line overflow-hidden transition-all duration-300 hover:shadow-[0_16px_36px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-1 ${tint.bg} ${
         soldOut ? 'opacity-70' : ''
       }`}
     >
-      <div className="relative aspect-square overflow-hidden bg-surfacealt">
-        {soldOut ? (
-          <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wide bg-ink/85 text-white backdrop-blur-sm">
-            Sold out
-          </span>
-        ) : onSale ? (
-          <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wide bg-crimson text-white">
-            -{discountPct}%
-          </span>
-        ) : isNew ? (
-          <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wide bg-volt text-voltink">
-            New
-          </span>
-        ) : null}
+      {/* vertical brand tag, top-left */}
+      <div className={`absolute top-0 left-0 z-10 h-24 w-7 flex items-center justify-center rounded-br-lg ${tint.bar}`}>
+        <span
+          className="text-[10px] font-bold uppercase tracking-widest"
+          style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+        >
+          {product.brand || 'SoleMart'}
+        </span>
+      </div>
 
+      {/* status badge, top-right */}
+      {soldOut ? (
+        <span className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wide bg-ink/85 text-white backdrop-blur-sm">
+          Sold out
+        </span>
+      ) : onSale ? (
+        <span className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wide bg-crimson text-white">
+          -{discountPct}%
+        </span>
+      ) : isNew ? (
+        <span className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wide bg-volt text-voltink">
+          New
+        </span>
+      ) : null}
+
+      {/* floating product image */}
+      <div className="relative aspect-square flex items-center justify-center p-8 pt-10">
+        <img
+          src={(product.images && product.images[0]) || FALLBACK}
+          alt={product.name}
+          className={`max-h-full max-w-full object-contain drop-shadow-xl transition-transform duration-500 ease-out ${
+            soldOut ? '' : 'group-hover:scale-110 group-hover:-rotate-2'
+          }`}
+        />
+      </div>
+
+      {/* bottom row: wishlist · name+price · quick add */}
+      <div className="flex items-center justify-between gap-2 px-4 pb-4">
         <button
           type="button"
           onClick={e => {
@@ -46,40 +102,30 @@ export default function ProductCard({ product }) {
             e.stopPropagation();
             toggle(product.id);
           }}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform"
+          className="w-8 h-8 shrink-0 rounded-full bg-white/85 flex items-center justify-center hover:scale-110 transition-transform"
           aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <Heart size={16} className={saved ? 'fill-crimson text-crimson' : 'text-ink'} />
+          <Heart size={15} className={saved ? 'fill-crimson text-crimson' : 'text-ink'} />
         </button>
 
-        <img
-          src={(product.images && product.images[0]) || FALLBACK}
-          alt={product.name}
-          className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
-            soldOut ? '' : 'group-hover:scale-[1.06]'
-          }`}
-        />
-
-        {!soldOut && (
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        )}
-      </div>
-
-      <div className="p-4">
-        <div className="text-[10px] text-muted uppercase tracking-widest font-semibold">
-          {product.brand || 'SoleMart'}
-        </div>
-        <div className="font-bold text-[15px] leading-snug mt-1 mb-2 line-clamp-1">{product.name}</div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-baseline gap-2 font-mono">
-            <span className="font-bold text-base">{money(price)}</span>
-            {onSale && <span className="text-xs text-muted line-through">{money(product.compare_at_price)}</span>}
+        <div className="text-center min-w-0 flex-1">
+          <div className="font-bold text-[14px] leading-tight truncate mb-0.5">{product.name}</div>
+          <div className="flex items-baseline gap-1.5 justify-center font-mono">
+            {onSale && <span className="text-[11px] text-muted line-through">{money(product.compare_at_price)}</span>}
+            <span className="font-bold text-sm">{money(price)}</span>
           </div>
-          {lowStock && (
-            <span className="text-[10px] font-mono font-semibold text-crimson">Only {stock} left</span>
-          )}
+          {lowStock && <div className="text-[10px] font-mono font-semibold text-crimson mt-0.5">Only {stock} left</div>}
         </div>
+
+        <button
+          type="button"
+          onClick={handleQuickAdd}
+          disabled={soldOut}
+          className="w-8 h-8 shrink-0 rounded-full bg-ink text-volt flex items-center justify-center hover:scale-110 transition-transform disabled:opacity-40 disabled:hover:scale-100"
+          aria-label="Quick add to cart"
+        >
+          <ShoppingBag size={15} />
+        </button>
       </div>
     </Link>
   );
