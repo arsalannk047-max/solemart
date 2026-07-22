@@ -15,6 +15,23 @@ html {
 body {
   background: #F5F5F7;
   color: #0B0B0D;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* subtle global polish: buttons/links get a quick, consistent color transition
+   even where a component didn't explicitly add one */
+a, button {
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+/* tactile press-down feedback for the volt "stepped" buttons, site-wide */
+.shadow-volt {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.shadow-volt:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #94C400;
 }
 
 ::selection {
@@ -39,7 +56,7 @@ body {
   pointer-events: none;
 }
 
-/* ---- animated hero background: drifting glow orbs + moving grid ---- */
+/* ---- hero background: soft static grid + gently drifting glow (lightweight, GPU-cheap) ---- */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -49,62 +66,47 @@ body {
 .hero-bg::before {
   content: '';
   position: absolute;
-  inset: -10%;
+  inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
   background-size: 42px 42px;
-  animation: gridDrift 26s linear infinite;
-}
-@keyframes gridDrift {
-  from { transform: translate(0, 0); }
-  to { transform: translate(42px, 42px); }
 }
 
 .glow-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.55;
+  filter: blur(48px);
+  opacity: 0.4;
   will-change: transform;
+  transform: translateZ(0);
 }
 .glow-orb.volt {
-  width: 420px;
-  height: 420px;
+  width: 380px;
+  height: 380px;
   background: #C6FF4D;
-  top: -120px;
-  left: -100px;
-  animation: floatA 16s ease-in-out infinite;
+  top: -110px;
+  left: -90px;
+  animation: floatA 24s ease-in-out infinite;
 }
 .glow-orb.crimson {
-  width: 360px;
-  height: 360px;
+  width: 320px;
+  height: 320px;
   background: #E63950;
-  bottom: -140px;
-  right: -80px;
-  animation: floatB 19s ease-in-out infinite;
-}
-.glow-orb.azure {
-  width: 260px;
-  height: 260px;
-  background: #3D7CFF;
-  top: 30%;
-  right: 18%;
-  opacity: 0.35;
-  animation: floatC 22s ease-in-out infinite;
+  bottom: -120px;
+  right: -70px;
+  opacity: 0.32;
+  animation: floatB 28s ease-in-out infinite;
 }
 @keyframes floatA {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(60px, 40px) scale(1.12); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(50px, 30px, 0); }
 }
 @keyframes floatB {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-50px, -30px) scale(1.08); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-40px, -25px, 0); }
 }
-@keyframes floatC {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-40px, 50px); }
-}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

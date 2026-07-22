@@ -19,10 +19,10 @@ export default async function HomePage() {
           loop
           muted
           playsInline
-          poster="/hero-poster-neon.jpg"
+          poster="/hero-poster-3.jpg"
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src="/hero-video-neon.mp4" type="video/mp4" />
+          <source src="/hero-video-neon2.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/65"></div>
 
