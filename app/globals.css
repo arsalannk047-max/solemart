@@ -13,7 +13,7 @@ html {
 }
 
 body {
-  background: #F5F5F7;
+  background: #05060a;
   color: #0B0B0D;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -72,7 +72,6 @@ a, button {
     linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
   background-size: 42px 42px;
 }
-
 .glow-orb {
   position: absolute;
   border-radius: 50%;
@@ -105,6 +104,60 @@ a, button {
 @keyframes floatB {
   0%, 100% { transform: translate3d(0, 0, 0); }
   50% { transform: translate3d(-40px, -25px, 0); }
+}
+
+/* ---- site-wide ambient background: dark canvas + drifting green/yellow glow ---- */
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: #05060a;
+}
+.site-bg::before {
+  content: '';
+  position: absolute;
+  inset: -15%;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(198, 255, 77, 0.16), transparent 45%),
+    radial-gradient(circle at 85% 25%, rgba(255, 214, 0, 0.13), transparent 42%),
+    radial-gradient(circle at 30% 88%, rgba(198, 255, 77, 0.10), transparent 40%);
+  filter: blur(8px);
+  animation: siteBgDrift 32s ease-in-out infinite;
+}
+.site-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+@keyframes siteBgDrift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(40px, -30px, 0); }
+}
+
+/* flickering lightning bolts — quick flash then fade, staggered, low CPU cost */
+.bolt {
+  position: absolute;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(198, 255, 77, 0.85)) drop-shadow(0 0 16px rgba(255, 214, 0, 0.5));
+  animation: boltFlicker 7s ease-in-out infinite;
+}
+.bolt.b2 {
+  animation-delay: 2.3s;
+}
+.bolt.b3 {
+  animation-delay: 4.6s;
+}
+@keyframes boltFlicker {
+  0%, 90%, 100% { opacity: 0; }
+  91% { opacity: 1; }
+  92.5% { opacity: 0.15; }
+  94% { opacity: 0.9; }
+  96% { opacity: 0; }
 }
 
 a:focus-visible,

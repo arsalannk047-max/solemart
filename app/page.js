@@ -49,17 +49,17 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-6 py-14">
         <div className="mb-7">
           <div className="font-mono text-crimson text-xs tracking-widest uppercase font-bold">Browse by</div>
-          <h2 className="font-display text-3xl uppercase mt-1">Category</h2>
+          <h2 className="font-display text-3xl uppercase mt-1 text-white">Category</h2>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2">
-          <Link href="/shop" className="whitespace-nowrap px-5 py-2.5 rounded-full border-2 border-ink bg-ink text-volt font-bold text-sm uppercase">
+          <Link href="/shop" className="whitespace-nowrap px-5 py-2.5 rounded-full border-2 border-volt bg-ink text-volt font-bold text-sm uppercase">
             All
           </Link>
           {(categories || []).map(c => (
             <Link
               key={c.id}
               href={`/shop?category=${c.id}`}
-              className="whitespace-nowrap px-5 py-2.5 rounded-full border-2 border-ink bg-surface font-bold text-sm uppercase hover:bg-ink hover:text-volt transition-colors"
+              className="whitespace-nowrap px-5 py-2.5 rounded-full border-2 border-line bg-surface font-bold text-sm uppercase hover:bg-ink hover:text-volt hover:border-ink transition-colors"
             >
               {c.name}
             </Link>
@@ -71,13 +71,13 @@ export default async function HomePage() {
         <div className="flex justify-between items-end flex-wrap gap-4 mb-7">
           <div>
             <div className="font-mono text-crimson text-xs tracking-widest uppercase font-bold">On the shelf</div>
-            <h2 className="font-display text-3xl uppercase mt-1">Featured pairs</h2>
+            <h2 className="font-display text-3xl uppercase mt-1 text-white">Featured pairs</h2>
           </div>
-          <Link href="/shop" className="bg-ink text-white text-xs font-bold uppercase px-5 py-2.5 rounded-full">View all</Link>
+          <Link href="/shop" className="bg-ink text-volt text-xs font-bold uppercase px-5 py-2.5 rounded-full border border-volt/30">View all</Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {(!products || products.length === 0) && (
-            <div className="col-span-full text-center text-muted py-16">No products yet — check back soon.</div>
+            <div className="col-span-full text-center text-white/50 py-16">No products yet — check back soon.</div>
           )}
           {(products || []).map(p => (
             <ProductCard key={p.id} product={p} />
