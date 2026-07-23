@@ -7,11 +7,17 @@ import { useCart } from './CartProvider';
 
 const FALLBACK = 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=60';
 
-const ACCENTS = ['bg-volt text-voltink', 'bg-crimson text-white', 'bg-ink text-volt'];
-function accentFor(id) {
+// Rotates through a few on-brand tinted backgrounds so the grid doesn't look flat/repetitive.
+const TINTS = [
+  { bg: 'bg-volt/10', bar: 'bg-volt text-voltink' },
+  { bg: 'bg-crimson/10', bar: 'bg-crimson text-white' },
+  { bg: 'bg-surfacealt', bar: 'bg-ink text-volt' }
+];
+
+function tintFor(id) {
   let hash = 0;
   for (let i = 0; i < String(id).length; i++) hash = (hash + String(id).charCodeAt(i)) % 997;
-  return ACCENTS[hash % ACCENTS.length];
+  return TINTS[hash % TINTS.length];
 }
 
 export default function ProductCard({ product }) {
@@ -25,7 +31,7 @@ export default function ProductCard({ product }) {
   const soldOut = stock === 0;
   const lowStock = !soldOut && stock <= 5;
   const discountPct = onSale ? Math.round(((product.compare_at_price - price) / product.compare_at_price) * 100) : 0;
-  const accent = accentFor(product.id);
+  const tint = tintFor(product.id);
 
   function handleQuickAdd(e) {
     e.preventDefault();
@@ -47,13 +53,18 @@ export default function ProductCard({ product }) {
   return (
     <Link
       href={`/product/${product.slug}`}
-      className={`group relative block bg-surface rounded-2xl border border-line overflow-hidden shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)] transition-all duration-300 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)] hover:-translate-y-1 ${
+      className={`group relative block rounded-2xl border border-line overflow-hidden transition-all duration-300 hover:shadow-[0_16px_36px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-1 ${tint.bg} ${
         soldOut ? 'opacity-70' : ''
       }`}
     >
-      {/* small brand ribbon, top-left */}
-      <div className={`absolute top-0 left-0 z-10 px-2.5 py-1 rounded-br-lg text-[10px] font-bold uppercase tracking-widest ${accent}`}>
-        {product.brand || 'SoleMart'}
+      {/* vertical brand tag, top-left */}
+      <div className={`absolute top-0 left-0 z-10 h-24 w-7 flex items-center justify-center rounded-br-lg ${tint.bar}`}>
+        <span
+          className="text-[10px] font-bold uppercase tracking-widest"
+          style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+        >
+          {product.brand || 'SoleMart'}
+        </span>
       </div>
 
       {/* status badge, top-right */}
@@ -71,19 +82,20 @@ export default function ProductCard({ product }) {
         </span>
       ) : null}
 
-      {/* full-bleed product photo — sits on the card's own white background, no mismatch */}
-      <div className="relative aspect-square overflow-hidden bg-surfacealt">
+      {/* floating product image — mix-blend-multiply makes the photo's own white
+          background disappear into the tinted card, instead of showing as a mismatched box */}
+      <div className="relative aspect-square flex items-center justify-center p-8 pt-10 isolate">
         <img
           src={(product.images && product.images[0]) || FALLBACK}
           alt={product.name}
-          className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
-            soldOut ? '' : 'group-hover:scale-[1.06]'
+          className={`max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-500 ease-out ${
+            soldOut ? '' : 'group-hover:scale-110 group-hover:-rotate-2'
           }`}
         />
       </div>
 
       {/* bottom row: wishlist · name+price · quick add */}
-      <div className="flex items-center justify-between gap-2 px-4 py-3.5">
+      <div className="flex items-center justify-between gap-2 px-4 pb-4">
         <button
           type="button"
           onClick={e => {
@@ -91,7 +103,7 @@ export default function ProductCard({ product }) {
             e.stopPropagation();
             toggle(product.id);
           }}
-          className="w-8 h-8 shrink-0 rounded-full border border-line flex items-center justify-center hover:bg-surfacealt transition-colors"
+          className="w-8 h-8 shrink-0 rounded-full bg-white/85 flex items-center justify-center hover:scale-110 transition-transform"
           aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
         >
           <Heart size={15} className={saved ? 'fill-crimson text-crimson' : 'text-ink'} />
