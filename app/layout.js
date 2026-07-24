@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { CartProvider } from '@/components/CartProvider';
 import { WishlistProvider } from '@/components/WishlistProvider';
-import IntroParticles from '@/components/IntroParticles';
+import IntroSplash from '@/components/IntroSplash';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { getCurrentProfile } from '@/lib/auth';
 
@@ -22,7 +22,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" className={`${anton.variable} ${inter.variable} ${mono.variable}`}>
       <body className="font-body">
-        <IntroParticles />
+        <IntroSplash />
         <WishlistProvider>
           <CartProvider>
             <Header user={profile} />
